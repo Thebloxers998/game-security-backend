@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const winston = require('winston');
+const path = require('path');
 
 // Set up Winston logger
 const logger = winston.createLogger({
@@ -10,13 +11,13 @@ const logger = winston.createLogger({
         winston.format.json()
     ),
     transports: [
-        new winston.transports.File({ filename: 'server.log' }),
+        new winston.transports.File({ filename: path.join(__dirname, '../logs/server.log') }),
         new winston.transports.Console()
     ]
 });
 
 const app = express();
-const port = 3000;
+const port = 4000; // Changed port from 3000 to 4000
 
 app.use(bodyParser.json());
 
