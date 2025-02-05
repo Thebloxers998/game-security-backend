@@ -1,0 +1,16 @@
+{
+  "name": "game-security-backend",
+  "version": "1.0.0",
+  "description": "Backend service for securing games in TurboWarp",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "author": "",
+  "license": "BSL-1.0",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "winston": "^3.3.3"
+  }
+}
