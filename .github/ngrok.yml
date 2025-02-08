@@ -1,0 +1,41 @@
+name: Start ngrok on Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  start-ngrok:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start local server
+        run: npm start &
+      
+      - name: Install ngrok
+        run: |
+          curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc > /dev/null \
+          && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list \
+          && sudo apt-get update && sudo apt-get install ngrok
+
+      - name: Start ngrok
+        run: ngrok http 4000 --log=stdout > /dev/null &
+      
+      - name: Get ngrok URL
+        run: curl --silent --max-time 10 --connect-timeout 5 --retry 5 --retry-max-time 30 http://localhost:4040/api/tunnels | grep -Po '(?<=public_url":")https://[a-z0-9]*\.ngrok.io'
+
+      - name: Display ngrok URL
+        run: |
+          echo "ngrok URL: $(curl --silent --max-time 10 --connect-timeout 5 --retry 5 --retry-max-time 30 http://localhost:4040/api/tunnels | grep -Po '(?<=public_url":")https://[a-z0-9]*\.ngrok.io')"
