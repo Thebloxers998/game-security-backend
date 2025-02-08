@@ -23,19 +23,22 @@ jobs:
 
       - name: Start local server
         run: npm start &
-      
+
       - name: Install ngrok
         run: |
           curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc > /dev/null \
           && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list \
           && sudo apt-get update && sudo apt-get install ngrok
 
+      - name: Authenticate ngrok
+        run: ngrok config add-authtoken 2skyGt89NdRLvrxoutxMBAVXhfd_7vm15PC2YPidrUPCkcEL4
+
       - name: Start ngrok
         run: ngrok http 4000 --log=stdout > /dev/null &
       
       - name: Get ngrok URL
-        run: curl --silent --max-time 10 --connect-timeout 5 --retry 5 --retry-max-time 30 http://localhost:4040/api/tunnels | grep -Po '(?<=public_url":")https://[a-z0-9]*\.ngrok.io'
+        run: curl --silent --max-time 10 --connect-timeout 5 --retry 5 --retry-max-time 30 http://localhost:4040/api/tunnels | grep -Po '(?<=public_url\":\")https://[a-z0-9]*\.ngrok.io'
 
       - name: Display ngrok URL
         run: |
-          echo "ngrok URL: $(curl --silent --max-time 10 --connect-timeout 5 --retry 5 --retry-max-time 30 http://localhost:4040/api/tunnels | grep -Po '(?<=public_url":")https://[a-z0-9]*\.ngrok.io')"
+          echo "ngrok URL: $(curl --silent --max-time 10 --connect-timeout 5 --retry 5 --retry-max-time 30 http://localhost:4040/api/tunnels | grep -Po '(?<=public_url\":\")https://[a-z0-9]*\.ngrok.io')"
